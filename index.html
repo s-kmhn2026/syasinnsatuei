@@ -62,9 +62,14 @@
             <h1 class="text-xl md:text-2xl font-black text-amber-900 tracking-wider flex items-center gap-1">
                 <i class="fa-solid fa-camera-retro"></i> たんけん
             </h1>
-            <button id="tts-repeat-btn" onclick="repeatCurrentVoice()" class="bg-amber-100 text-amber-800 p-3 rounded-2xl shadow active:scale-95 transition border-2 border-amber-300">
-                <i class="fa-solid fa-volume-high text-xl"></i>
-            </button>
+            <div class="flex items-center space-x-2">
+                <button id="tts-repeat-btn" onclick="repeatCurrentVoice()" class="bg-amber-100 text-amber-800 p-3 rounded-2xl shadow active:scale-95 transition border-2 border-amber-300" title="声をもういちど">
+                    <i class="fa-solid fa-volume-high text-xl"></i>
+                </button>
+                <button id="admin-btn" onclick="openAdminModal()" class="bg-amber-100 text-amber-800 p-3 rounded-2xl shadow active:scale-95 transition border-2 border-amber-300" title="せんせい用設定">
+                    <i class="fa-solid fa-gear text-xl"></i>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -192,9 +197,71 @@
             </div>
 
             <div id="badge-grid" class="grid grid-cols-2 gap-3 pb-6">
-                <!-- JavaScriptで10個のバッジスロットを生成 -->
+                <!-- JavaScriptでバッジスロットを生成 -->
             </div>
         </section>
+
+        <!-- 6. 先生用 場所管理モーダル -->
+        <div id="modal-admin" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-white w-full max-w-md rounded-3xl p-5 shadow-2xl border-4 border-amber-400 max-h-[90vh] overflow-y-auto pop-in text-left">
+                <div class="flex justify-between items-center mb-3 border-b-2 border-amber-100 pb-2">
+                    <h3 class="text-lg font-black text-amber-900 flex items-center gap-2">
+                        <i class="fa-solid fa-gear text-amber-500"></i> ばしょの かんり (先生用)
+                    </h3>
+                    <button onclick="closeAdminModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold px-2">
+                        &times;
+                    </button>
+                </div>
+
+                <!-- 新しい場所を追加フォーム -->
+                <div class="bg-amber-50 p-3.5 rounded-2xl border-2 border-amber-200 mb-4 space-y-3">
+                    <h4 class="font-extrabold text-amber-800 text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-plus-circle"></i> あたらしい ばしょを ついか
+                    </h4>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">ばしょの なまえ</label>
+                        <input type="text" id="new-loc-title" placeholder="例: としょしつ" class="w-full px-3 py-2 rounded-xl border-2 border-amber-300 focus:outline-none focus:border-amber-500 font-bold text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">よみかた (おんせい用)</label>
+                        <input type="text" id="new-loc-kana" placeholder="例: としょしつ" class="w-full px-3 py-2 rounded-xl border-2 border-amber-300 focus:outline-none focus:border-amber-500 font-bold text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-600 mb-1">アイコン (えもじ)</label>
+                        <div class="flex gap-2 items-center">
+                            <input type="text" id="new-loc-icon" value="📚" class="w-14 px-2 py-1.5 text-center text-xl rounded-xl border-2 border-amber-300 font-bold">
+                            <div class="flex gap-1 overflow-x-auto py-1">
+                                <button type="button" onclick="setEmoji('📚')" class="text-xl p-1 bg-white rounded-lg border hover:bg-amber-100">📚</button>
+                                <button type="button" onclick="setEmoji('💻')" class="text-xl p-1 bg-white rounded-lg border hover:bg-amber-100">💻</button>
+                                <button type="button" onclick="setEmoji('🎵')" class="text-xl p-1 bg-white rounded-lg border hover:bg-amber-100">🎵</button>
+                                <button type="button" onclick="setEmoji('🌱')" class="text-xl p-1 bg-white rounded-lg border hover:bg-amber-100">🌱</button>
+                                <button type="button" onclick="setEmoji('⚽')" class="text-xl p-1 bg-white rounded-lg border hover:bg-amber-100">⚽</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="addCustomLocation()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-extrabold py-2.5 rounded-xl shadow border-b-4 border-amber-700 active:translate-y-0.5 text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus"></i> ばしょを ついかする
+                    </button>
+                </div>
+
+                <!-- 登録済みの場所一覧 -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-extrabold text-slate-700 text-xs">登録中 (<span id="admin-loc-count">10</span>箇所)</h4>
+                        <button onclick="resetDefaultLocations()" class="text-xs text-rose-500 hover:underline font-bold">初期状態に戻す</button>
+                    </div>
+                    <div id="admin-location-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                        <!-- JSで描画 -->
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button onclick="closeAdminModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-2xl text-sm">
+                        とじる
+                    </button>
+                </div>
+            </div>
+        </div>
 
     </main>
 
@@ -205,9 +272,9 @@
 
     <script>
         /* ----------------------------------------------------
-         * データ定義 (10箇所のミッション場所)
+         * データ定義 (デフォルト10箇所のミッション場所)
          * ---------------------------------------------------- */
-        const LOCATIONS = [
+        const DEFAULT_LOCATIONS = [
             { id: '1pure', title: '１ぷれ', kana: 'いちぷれ', icon: '🎨', color: 'bg-rose-100 text-rose-800 border-rose-300' },
             { id: '3pure', title: '３ぷれ', kana: 'さんぷれ', icon: '🧩', color: 'bg-pink-100 text-pink-800 border-pink-300' },
             { id: 'taiikukan', title: 'たいいくかん', kana: 'たいいくかん', icon: '🏀', color: 'bg-orange-100 text-orange-800 border-orange-300' },
@@ -219,6 +286,9 @@
             { id: '5nen4kumi', title: '５ねん４くみ', kana: 'ごねん よんくみ', icon: '4️⃣', color: 'bg-violet-100 text-violet-800 border-violet-300' },
             { id: 'kyoushitsu', title: 'きょうしつ', kana: 'きょうしつ', icon: '🏫', color: 'bg-amber-100 text-amber-800 border-amber-300' }
         ];
+
+        // 動的な場所リスト
+        let LOCATIONS = [...DEFAULT_LOCATIONS];
 
         // アプリの状態
         let selectedLocation = null;
@@ -557,6 +627,7 @@
         function saveData() {
             try {
                 localStorage.setItem('tokubetsu_school_badges', JSON.stringify(badgeStore));
+                localStorage.setItem('tokubetsu_school_locations', JSON.stringify(LOCATIONS));
             } catch(e) {
                 console.error("Storage save failed", e);
             }
@@ -564,13 +635,130 @@
 
         function loadData() {
             try {
-                const data = localStorage.getItem('tokubetsu_school_badges');
-                if (data) {
-                    badgeStore = JSON.parse(data);
+                const badgeData = localStorage.getItem('tokubetsu_school_badges');
+                if (badgeData) {
+                    badgeStore = JSON.parse(badgeData);
+                }
+
+                const locData = localStorage.getItem('tokubetsu_school_locations');
+                if (locData) {
+                    LOCATIONS = JSON.parse(locData);
+                } else {
+                    LOCATIONS = [...DEFAULT_LOCATIONS];
                 }
             } catch(e) {
                 console.error("Storage load failed", e);
+                LOCATIONS = [...DEFAULT_LOCATIONS];
             }
+        }
+
+        /* ----------------------------------------------------
+         * 先生用 場所管理機能
+         * ---------------------------------------------------- */
+        function openAdminModal() {
+            playSound('click');
+            renderAdminLocationList();
+            document.getElementById('modal-admin').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            playSound('click');
+            document.getElementById('modal-admin').classList.add('hidden');
+            updateHomeStats();
+        }
+
+        function setEmoji(emoji) {
+            document.getElementById('new-loc-icon').value = emoji;
+        }
+
+        function addCustomLocation() {
+            const titleInput = document.getElementById('new-loc-title');
+            const kanaInput = document.getElementById('new-loc-kana');
+            const iconInput = document.getElementById('new-loc-icon');
+
+            const title = titleInput.value.trim();
+            const kana = kanaInput.value.trim() || title;
+            const icon = iconInput.value.trim() || '📍';
+
+            if (!title) {
+                alert("ばしょの なまえを 入力してください。");
+                return;
+            }
+
+            playSound('click');
+
+            const colors = [
+                'bg-rose-100 text-rose-800 border-rose-300',
+                'bg-sky-100 text-sky-800 border-sky-300',
+                'bg-emerald-100 text-emerald-800 border-emerald-300',
+                'bg-purple-100 text-purple-800 border-purple-300',
+                'bg-amber-100 text-amber-800 border-amber-300'
+            ];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+            const newLoc = {
+                id: 'loc_' + Date.now(),
+                title: title,
+                kana: kana,
+                icon: icon,
+                color: randomColor
+            };
+
+            LOCATIONS.push(newLoc);
+            saveData();
+
+            // フォームクリア
+            titleInput.value = '';
+            kanaInput.value = '';
+            iconInput.value = '📚';
+
+            renderAdminLocationList();
+            speak(`${kana} を ついかしたよ！`);
+        }
+
+        function deleteLocation(locId) {
+            if (!confirm("この 場所を 削除しても よろしいですか？")) return;
+
+            playSound('click');
+            LOCATIONS = LOCATIONS.filter(l => l.id !== locId);
+            delete badgeStore[locId]; // バッジ情報も削除
+            saveData();
+            renderAdminLocationList();
+            updateHomeStats();
+        }
+
+        function resetDefaultLocations() {
+            if (!confirm("初期の10箇所に戻しますか？（撮影したデータもリセットされます）")) return;
+
+            playSound('click');
+            LOCATIONS = [...DEFAULT_LOCATIONS];
+            badgeStore = {};
+            saveData();
+            renderAdminLocationList();
+            updateHomeStats();
+            speak("初期状態に もどしたよ！");
+        }
+
+        function renderAdminLocationList() {
+            const listEl = document.getElementById('admin-location-list');
+            document.getElementById('admin-loc-count').textContent = LOCATIONS.length;
+            listEl.innerHTML = '';
+
+            LOCATIONS.forEach(loc => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-2 bg-slate-50 rounded-xl border border-slate-200 text-xs font-bold';
+                div.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg">${loc.icon}</span>
+                        <span class="text-slate-800">${loc.title}</span>
+                        <span class="text-[10px] text-slate-400">(${loc.kana})</span>
+                    </div>
+                    <button onclick="deleteLocation('${loc.id}')" class="text-rose-500 hover:text-rose-700 px-2 py-1 rounded bg-rose-50 border border-rose-200">
+                        削除
+                    </button>
+                `;
+                listEl.appendChild(div);
+            });
         }
 
         /* ----------------------------------------------------
